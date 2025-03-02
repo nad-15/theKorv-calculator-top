@@ -1,3 +1,9 @@
+// newCalcArray is the main array
+// evaluation happends in runCalcOnAllObjects
+// operations input happen here function opSymbol(btn)
+// function regNum(btn) 
+
+
 // Body
 const calcWrapper = document.querySelector(".calc--wrapper")
 
@@ -167,6 +173,7 @@ function runCalcOnAllObjects(newCalcArray, clgMsg) {
         if (temp.length) {
             result.push(temp);
         }
+        // console.log(`result is ` + result);
         return result;
     }
 
@@ -174,6 +181,7 @@ function runCalcOnAllObjects(newCalcArray, clgMsg) {
         typeof item === "string" ? parseFloat(item) : item
     );
 
+    // split the array s
     let calcArrSplitByAddSub = splitByAdditionAndSubtraction(numberedNewCalcArr);
     let addAndSubLeft = []
 
@@ -186,6 +194,7 @@ function runCalcOnAllObjects(newCalcArray, clgMsg) {
             if (calcItem.length > 1) {
                 const sum = reduceThisItem(calcItem)
                 addAndSubLeft.push(sum);
+                console.log(`sum is after reduce` +  sum);
             } else {
                 addAndSubLeft.push(calcItem[0]);
             }
@@ -214,16 +223,21 @@ function runCalcOnAllObjects(newCalcArray, clgMsg) {
 
     function reduceThisItem(arr) {
         const sum = arr.reduce((acc, curr, i, arr) => {
-            if (arr.length === 2 && arr.at(-1).name === "reminder") {
-                return arr[0] / 100;
+
+            if (arr.at(-1)?.name === "reminder" && arr.length > 1) {
+                return arr.at(-2) / 100;
             }
+            
 
             if (typeof curr === "function") {
                 let currFunc = curr;
-                if (currFunc.name = "reminder" && typeof arr[i + 1] === "function") {
+                // doing percent here
+                if (currFunc.name === "reminder" && typeof arr[i + 1] === "function") {
                     // return acc;
                     let result = arr[i + 1](acc / 100, arr[i + 2])
                     return result;
+                //another else if here if the curr is `%` and it is the last element it should be treated as 'percent'
+                // } else if (currFunc.name === "reminder" ){
                 } else if (arr[i - 1].name === "reminder") {
                     return acc;
                 } else {
@@ -471,7 +485,11 @@ function opSymbol(btn) {
         let prevOperator = newCalcArray.at(-1)
         if (prevOperator.name !== "reminder" && typeof newCalcArray.at(-2) !== "function") {
             newCalcArray[newCalcArray.length - 1] = operator
+
+            //logic should be changed... if fun
+
         } else if (prevOperator.name === "reminder" && typeof newCalcArray.at(-2) !== "function") {
+                     // example 2 + (inserting)
             newCalcArray.push(operator)
         } else if (newCalcArray.at(-2).name === "reminder" && operator.name !== "reminder") {
             newCalcArray[newCalcArray.length - 1] = operator
